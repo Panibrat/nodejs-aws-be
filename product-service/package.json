@@ -7,9 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "local: get-admin": "serverless invoke local --function getShopAdmin",
     "local: get-products": "serverless invoke local --function getProductsList",
+    "local: get-weather": "serverless invoke local --function getKyivWeather",
     "aws:deploy": "sls deploy"
   },
   "dependencies": {
+    "axios": "^0.21.0",
     "source-map-support": "^0.5.10"
   },
   "devDependencies": {

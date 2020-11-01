@@ -71,8 +71,19 @@ const serverlessConfiguration: Serverless = {
           }
         }
       ]
-    }
-
+    },
+    getKyivWeather: {
+      handler: 'getWeatherInKyiv.handler',
+      events: [
+        {
+          http: {
+            method: 'get',
+            path: 'weather',
+            cors: true,
+          }
+        }
+      ]
+    },
   }
 }
 
