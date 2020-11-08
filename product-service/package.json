@@ -8,11 +8,14 @@
     "local: get-admin": "serverless invoke local --function getShopAdmin",
     "local: get-products": "serverless invoke local --function getProductsList",
     "local: get-weather": "serverless invoke local --function getKyivWeather",
+    "local: migrate": "serverless invoke local --function migrateTables",
     "aws:deploy": "sls deploy"
   },
   "dependencies": {
     "axios": "^0.21.0",
-    "source-map-support": "^0.5.10"
+    "pg": "^8.4.2",
+    "source-map-support": "^0.5.10",
+    "uuid": "^8.3.1"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
