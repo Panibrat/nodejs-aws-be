@@ -46,6 +46,18 @@ const serverlessConfiguration: Serverless = {
         }
       ]
     },
+    postProduct: {
+      handler: 'postProduct.handler',
+      events: [
+        {
+          http: {
+            method: 'post',
+            path: 'products',
+            cors: true,
+          }
+        }
+      ]
+    },
     migrateTables: {
       handler: 'migrateTables.handler',
       events: []
