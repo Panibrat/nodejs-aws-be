@@ -1,6 +1,5 @@
 const createStockTableQuery = `
     CREATE TABLE stock (
-      id serial,
       product_id uuid UNIQUE,
       count integer NOT NULL,
       CONSTRAINT product_id FOREIGN KEY (product_id) REFERENCES products(id)

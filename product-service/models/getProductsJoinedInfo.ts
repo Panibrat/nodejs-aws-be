@@ -1,5 +1,5 @@
 const getProductsJoinedInfoQuery = `
-    SELECT product_id, title, description, price, image_src, count
+    SELECT id, title, description, price, image_src, count
       FROM products
       LEFT JOIN stock
       ON products.id=stock.product_id;
