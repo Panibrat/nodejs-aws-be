@@ -26,6 +26,11 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      PG_HOST: 'set valid host',
+      PG_PORT: 'set valid port',
+      PG_DATABASE: 'set valid database name',
+      PG_USERNAME: 'set valid user name',
+      PG_PASSWORD: 'set valid password',
     },
   },
   functions: {
@@ -40,6 +45,22 @@ const serverlessConfiguration: Serverless = {
           }
         }
       ]
+    },
+    postProduct: {
+      handler: 'postProduct.handler',
+      events: [
+        {
+          http: {
+            method: 'post',
+            path: 'products',
+            cors: true,
+          }
+        }
+      ]
+    },
+    migrateTables: {
+      handler: 'migrateTables.handler',
+      events: []
     },
     getProductById: {
       handler: 'getProductById.handler',
@@ -56,30 +77,6 @@ const serverlessConfiguration: Serverless = {
                 }
               }
             }
-          }
-        }
-      ]
-    },
-    getShopAdmin: {
-      handler: 'getShopAdmin.handler',
-      events: [
-        {
-          http: {
-            method: 'get',
-            path: 'admin',
-            cors: true,
-          }
-        }
-      ]
-    },
-    getKyivWeather: {
-      handler: 'getWeatherInKyiv.handler',
-      events: [
-        {
-          http: {
-            method: 'get',
-            path: 'weather',
-            cors: true,
           }
         }
       ]

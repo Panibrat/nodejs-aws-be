@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
+import { getClient } from './db/clientDb';
 
-import products from './db/productList.json';
 import { generateApiReponseHeaders } from './utils/generateApiReponseHeaders';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
@@ -10,24 +10,47 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   if (!id) {
     return {
       statusCode: 404,
-      body: 'Error: Mandatory path parameter is missed',
+      body: `Error: Mandatory path parameter is missed :( `,
       headers: generateApiReponseHeaders(),
     };
   }
 
-  const product = products.find((item) => item.id === id);
+  try {
+    const client = await getClient();
 
-  if (!product) {
+    const query = `
+      SELECT * FROM (SELECT id, title, description, price, image_src, count
+      FROM products
+      LEFT JOIN stock
+      ON products.id=stock.product_id) AS derivedTable
+      WHERE id='${id}';
+    `;
+
+    const { rows } = await client.query(query);
+
+    client.end();
+
+    if (!rows) {
+      return {
+        statusCode: 400,
+        body: `Can't find product with id: ${id} `,
+        headers: generateApiReponseHeaders(),
+      };
+    }
+
     return {
-      statusCode: 400,
-      body: `Can't find product with id: ${id} `,
+      statusCode: 200,
+      body: JSON.stringify(rows),
       headers: generateApiReponseHeaders(),
-    };
-  }
+    }
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(product),
-    headers: generateApiReponseHeaders(),
+  } catch (e) {
+    console.log('getProductById Error: ', e);
+
+    return {
+      statusCode: 500,
+      body: JSON.stringify(`Can't get product. Error: ${e}`),
+      headers: generateApiReponseHeaders(),
+    }
   }
 }
