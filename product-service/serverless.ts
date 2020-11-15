@@ -15,7 +15,7 @@ const serverlessConfiguration: Serverless = {
     }
   },
   // Add the serverless-webpack plugin
-  plugins: ['serverless-webpack'],
+  plugins: ['serverless-webpack', 'serverless-dotenv-plugin'],
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
@@ -26,11 +26,11 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      PG_HOST: 'set valid host',
-      PG_PORT: 'set valid port',
-      PG_DATABASE: 'set valid database name',
-      PG_USERNAME: 'set valid user name',
-      PG_PASSWORD: 'set valid password',
+      PG_HOST: process.env.RDS_HOST,
+      PG_PORT: process.env.RDS_PORT,
+      PG_DATABASE: process.env.RDS_DATABASE,
+      PG_USERNAME: process.env.RDS_USERNAME,
+      PG_PASSWORD: process.env.RDS_PASSWORD
     },
   },
   functions: {
