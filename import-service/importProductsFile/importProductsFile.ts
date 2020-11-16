@@ -19,17 +19,21 @@ export const importProductsFile = async (event) => {
         ContentType: 'text/csv',
     };
 
-    return new Promise((resolve, reject) => {
-        s3.getSignedUrl('putObject', params, (error, url) => {
-            if (error) {
-                console.log('error', error);
-                return reject(error);
-            }
-            resolve({
-                        statusCode: 200,
-                        body: url,
-                        headers: generateApiReponseHeaders(),
-                    });
-        })
-    });
+    try {
+        const signedUrl = await s3.getSignedUrl('putObject', params);
+
+        return {
+            statusCode: 200,
+            body: signedUrl,
+            headers: generateApiReponseHeaders(),
+        };
+    } catch(e) {
+        console.log('error', e);
+
+        return {
+            statusCode: 500,
+            body: JSON.stringify(`Server Error:, ${e}`),
+            headers: generateApiReponseHeaders(),
+        };
+    }
 }
