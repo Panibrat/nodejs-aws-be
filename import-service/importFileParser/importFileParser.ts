@@ -3,7 +3,7 @@ import * as csvParser from 'csv-parser';
 
 const BUCKET = 'panibrat-shop-assets'; // TODO: move to config
 
-export const importFileParser = async (event) => {
+export const importFileParser = (event) => {
     console.log('importFileParser: Event: ', JSON.stringify(event, null, 2));
 
     const s3 = new AWS.S3({ region: 'eu-west-1'});
