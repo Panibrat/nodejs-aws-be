@@ -28,6 +28,9 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      SQS_URL: {
+        Ref: 'SQSQueue'
+      },
     },
     iamRoleStatements: [
       {
@@ -40,7 +43,22 @@ const serverlessConfiguration: Serverless = {
         Action: ['s3:*'],
         Resource: [`arn:aws:s3:::${BUCKET}/*`],
       },
+      {
+        Effect: 'Allow',
+        Action: ['sqs:*'],
+        Resource: ['arn:aws:sqs:eu-west-1:618561913336:catalogItemsQueue'], // TODO: make auto sign
+      },
     ],
+  },
+  resources: {
+    Resources: {
+      SQSQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'catalogItemsQueue',
+        }
+      },
+    }
   },
   functions: {
     importProductsFile: {
@@ -80,6 +98,20 @@ const serverlessConfiguration: Serverless = {
         },
       ],
     },
+    catalogBatchProcess : {
+      handler: 'handler.catalogBatchProcess',
+      events: [
+        {
+          sqs: {
+            batchSize: 2,
+            arn: {
+              'Fn::GetAtt': ['SQSQueue', 'Arn'],
+            }
+          }
+        },
+      ],
+    },
+
   }
 }
 
