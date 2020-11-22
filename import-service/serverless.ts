@@ -28,8 +28,17 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      PG_HOST: process.env.RDS_HOST,
+      PG_PORT: process.env.RDS_PORT,
+      PG_DATABASE: process.env.RDS_DATABASE,
+      PG_USERNAME: process.env.RDS_USERNAME,
+      PG_PASSWORD: process.env.RDS_PASSWORD,
+      SNS_EMAIL_SUBSCRIBER: process.env.SNS_EMAIL_SUBSCRIBER,
       SQS_URL: {
         Ref: 'SQSQueue'
+      },
+      SNS_ARN: {
+        Ref: 'SNSTopic'
       },
     },
     iamRoleStatements: [
@@ -46,7 +55,20 @@ const serverlessConfiguration: Serverless = {
       {
         Effect: 'Allow',
         Action: ['sqs:*'],
-        Resource: ['arn:aws:sqs:eu-west-1:618561913336:catalogItemsQueue'], // TODO: make auto sign
+        Resource: [
+          {
+            'Fn::GetAtt': ['SQSQueue', 'Arn'],
+          },
+        ],
+      },
+      {
+        Effect: 'Allow',
+        Action: ['sns:*'],
+        Resource: [
+          {
+            Ref: 'SNSTopic'
+          }
+        ],
       },
     ],
   },
@@ -56,6 +78,22 @@ const serverlessConfiguration: Serverless = {
         Type: 'AWS::SQS::Queue',
         Properties: {
           QueueName: 'catalogItemsQueue',
+        }
+      },
+      SNSTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'catalogItemsSNS-Topic',
+        }
+      },
+      SNSSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: process.env.SNS_EMAIL_SUBSCRIBER,
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'SNSTopic'
+          },
         }
       },
     }
@@ -103,7 +141,7 @@ const serverlessConfiguration: Serverless = {
       events: [
         {
           sqs: {
-            batchSize: 2,
+            batchSize: 5,
             arn: {
               'Fn::GetAtt': ['SQSQueue', 'Arn'],
             }
