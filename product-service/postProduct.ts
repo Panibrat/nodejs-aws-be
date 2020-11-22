@@ -9,11 +9,10 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   console.log('postProductHandler: Event: ', event);
 
   const { body } = event;
-  console.log('body', body);
 
-  const { title, description, price, image_src, count } = JSON.parse(body);
+  const { title, description, price, count } = JSON.parse(body);
 
-  if (!title || !description || !price || !count || !image_src) {
+  if (!title || !description || !price || !count) {
     return {
       statusCode: 400,
       body: `Error: Mandatory product data is missed :( `,
@@ -25,7 +24,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     title,
     description,
     price,
-    image_src,
     count,
   };
 

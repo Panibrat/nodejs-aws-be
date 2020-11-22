@@ -1,27 +1,21 @@
 {
-  "name": "product-service-based-on-aws",
+  "name": "import-shop-product-service",
   "version": "1.0.0",
-  "description": "Tiny shop API using Serverless",
+  "description": "Tiny shop API: import service",
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "local: get-products": "serverless invoke local --function getProductsList",
-    "local: migrate": "serverless invoke local --function migrateTables",
     "aws:deploy": "sls deploy"
   },
   "dependencies": {
     "aws-sdk": "^2.792.0",
-    "axios": "^0.21.0",
     "csv-parser": "^2.3.3",
-    "pg": "^8.4.2",
     "serverless-dotenv-plugin": "^3.1.0",
-    "source-map-support": "^0.5.10",
-    "uuid": "^8.3.1"
+    "source-map-support": "^0.5.10"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
     "@types/node": "^10.12.18",
-    "@types/pg": "^7.14.6",
     "@types/serverless": "^1.72.5",
     "fork-ts-checker-webpack-plugin": "^3.0.1",
     "serverless-webpack": "^5.2.0",

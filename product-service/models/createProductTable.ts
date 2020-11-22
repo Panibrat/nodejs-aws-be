@@ -1,3 +1,5 @@
+import { Client } from 'pg';
+
 const createProductTableQuery = `
     CREATE TABLE products(
       id uuid primary key UNIQUE,
@@ -8,7 +10,7 @@ const createProductTableQuery = `
     );
   `;
 
-export const createProductTable = async (client) => {
+export const createProductTable = async (client: Client) => {
     console.log('createProductTable');
 
     try {
