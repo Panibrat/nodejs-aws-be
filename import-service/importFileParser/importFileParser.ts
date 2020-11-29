@@ -2,11 +2,14 @@ import * as AWS from 'aws-sdk';
 import * as csvParser from 'csv-parser';
 
 const BUCKET = 'panibrat-shop-assets'; // TODO: move to config
+const { SQS_URL } = process.env;
 
 export const importFileParser = (event) => {
     console.log('importFileParser: Event: ', JSON.stringify(event, null, 2));
 
     const s3 = new AWS.S3({ region: 'eu-west-1'});
+
+    const sqs = new AWS.SQS();
 
     for (let record of event.Records) {
 
@@ -18,7 +21,15 @@ export const importFileParser = (event) => {
         s3Stream
             .pipe(csvParser())
             .on('data', (data) => {
-                console.log(data);
+                console.log(`SQS data --->  ${JSON.stringify(data)}`);
+                console.log(`SQS_URL --->  ${SQS_URL}`);
+                sqs.sendMessage({ QueueUrl: SQS_URL, MessageBody: JSON.stringify(data)}, (error, data) => {
+                    if (error) {
+                        console.log(`SQS Error --> ${error}`);
+                    }
+
+                    console.log(`callback from SQS with data: ${JSON.stringify(data)}`);
+                });
             })
             .on('error', (error) => {
                 console.log('parser error', error);
@@ -30,6 +41,8 @@ export const importFileParser = (event) => {
                 }
 
                 try {
+
+                    console.log('END');
 
                     await s3
                         .copyObject({
