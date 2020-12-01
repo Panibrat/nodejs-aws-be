@@ -27,28 +27,10 @@ const serverlessConfiguration: Serverless = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
     },
-    iamRoleStatements: [
-    ],
-  },
-  resources: {
-    Resources: {
-    }
   },
   functions: {
     basicAuthorizer: {
       handler: 'handler.basicAuthorizer',
-      events: [
-        {
-          http: {
-            method: 'get',
-            path: 'import',
-            cors: true,
-/*            authorizer: {
-              type: "AWS::"
-            },*/
-          }
-        }
-      ]
     },
   }
 }
