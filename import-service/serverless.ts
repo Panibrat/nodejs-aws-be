@@ -17,7 +17,7 @@ const serverlessConfiguration: Serverless = {
     }
   },
   // Add the serverless-webpack plugin
-  plugins: ['serverless-webpack', 'serverless-dotenv-plugin'],
+  plugins: ['serverless-webpack', 'serverless-dotenv-plugin', 'serverless-pseudo-parameters'],
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
@@ -89,12 +89,38 @@ const serverlessConfiguration: Serverless = {
       SNSSubscription: {
         Type: 'AWS::SNS::Subscription',
         Properties: {
-          Endpoint: process.env.SNS_EMAIL_SUBSCRIBER,
+          Endpoint: 'oleksandr_panibratenko@epam.com',
           Protocol: 'email',
           TopicArn: {
             Ref: 'SNSTopic'
           },
         }
+      },
+      GatewayResponseDenied: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Credentials': "'true'",
+          },
+          ResponseType: 'ACCESS_DENIED',
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi',
+          },
+        },
+      },
+      GatewayResponseUnauthorized: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Credentials': "'true'",
+          },
+          ResponseType: 'UNAUTHORIZED',
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi',
+          },
+        },
       },
     }
   },
@@ -112,6 +138,14 @@ const serverlessConfiguration: Serverless = {
                   name: true
                 }
               }
+            },
+            authorizer: {
+              name: 'basicAuthorizer',
+              type: 'token',
+              identitySource: 'method.request.header.Authorization',
+              resultTtlInSeconds: 0,
+              arn:
+                  'arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:authorization-service-${self:provider.stage}-basicAuthorizer',
             },
             cors: true,
           }
