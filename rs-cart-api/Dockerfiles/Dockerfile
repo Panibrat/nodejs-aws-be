@@ -1,19 +1,16 @@
-# Base
-FROM node:12
-
+FROM node:12-alpine as builder
+ENV PORT=8080
 WORKDIR /app
-
-# Dependencies
 COPY package*.json ./
-RUN npm install
-
-# Build
+RUN npm ci && npm cache clear --force
 COPY . .
 RUN npm run build
+RUN npm prune --production
 
-# Application
+FROM node:12-alpine
+WORKDIR /app
+COPY --from=builder /app/node_modules ./node_modules/
+COPY --from=builder /app/dist ./
 USER node
-ENV PORT=8080
 EXPOSE 8080
-
-CMD ["node", "dist/main.js"]
+ENTRYPOINT ["node", "main.js"]

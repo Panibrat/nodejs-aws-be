@@ -1,0 +1,12 @@
+# We will install dependencies in our container so we don't need to include them to context
+node_modules
+
+# I'm not running tests inside container so there is no need to copy it
+test
+
+# Is not used for building a container
+.elasticbeanstalk
+scripts
+
+.gitignore
+.dockerignore
